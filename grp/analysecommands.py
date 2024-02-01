@@ -4,6 +4,10 @@ import logging
 import requests
 import os
 from dotenv import load_dotenv
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+sns.set(rc={'figure.figsize':(11.7,8.27)})
 
 # Set up the logging configuration
 logging.basicConfig(level=logging.NOTSET,
@@ -12,6 +16,20 @@ logging.basicConfig(level=logging.NOTSET,
 
 load_dotenv()
 API_URL = os.getenv("API_URL")
+
+
+def hex_to_rgb(hex_value):
+  h = hex_value.lstrip('#')
+  return tuple(int(h[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
+
+
+def palette(hex_colors):
+    sns.set()
+    rgb_colors = list(map(hex_to_rgb, hex_colors))
+    sns.palplot(rgb_colors)
+    plt.savefig("plot.png")
+    plt.clf()
+
 
 class Analyse(apc.Group):
     """Manage Analyse commands"""
@@ -33,16 +51,17 @@ class Analyse(apc.Group):
                 if data['success']:
                     # Extract color information from the API response
                     result = data['results']
-
+                    palette(result)
                     # Format the color information for display
-                    formatted_message = (
-                        f"Dominant Color: {result['dominant']}\n"
-                        f"Support Color: {result['support']}\n"
-                        f"Accent Colors: {', '.join(result['accent'])}"
-                    )
-
+                    #formatted_message = (
+                        #f"Dominant Color: {result['dominant']}\n"
+                        #f"Support Color: {result['support']}\n"
+                        #f"Accent Colors: {', '.join(result['accent'])}"
+                    #)
+                    
                     # Send the formatted color information
-                    await interaction.followup.send(formatted_message)
+                    await interaction.followup.send(file=discord.File("plot.png"))
+                    os.remove('plot.png')
                 else:
                     await interaction.followup.send(f"API Error: {data['error']}")
             else:

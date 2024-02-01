@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 from sklearn.cluster import MiniBatchKMeans
 
-def extract_colours(url: str) -> dict:
+def extract_colours(url: str) -> list:
     # Download and convert the image
     response = requests.get(url)
     if response.status_code != 200:
@@ -26,11 +26,4 @@ def extract_colours(url: str) -> dict:
     hex_colors_sorted = [hex_color for hex_color in sorted(
         hex_colors, key=lambda x: np.sum((clf.cluster_centers_ - np.mean(image_flat[labels == clf.predict(image_flat)], axis=0))**2), reverse=False)]
 
-    # Categorize colors into dominate, support, and accent
-    result = {
-        'dominant': hex_colors_sorted[0],
-        'support': hex_colors_sorted[1],
-        'accent': hex_colors_sorted[2:],
-    }
-
-    return result
+    return hex_colors_sorted
