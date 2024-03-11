@@ -9,7 +9,7 @@ from discord import app_commands as apc
 
 import seaborn as sns
 import matplotlib.pyplot as plt
-sns.set(rc={'figure.figsize':(11.7,8.27)})
+sns.set_theme(rc={'figure.figsize':(11.7,8.27)})
 
 # Set up the logging configuration
 logging.basicConfig(level=logging.NOTSET,
@@ -26,7 +26,7 @@ def hex_to_rgb(hex_value):
 
 
 def palette(hex_colors):
-    sns.set()
+    sns.set_theme()
     rgb_colors = list(map(hex_to_rgb, hex_colors))
     sns.palplot(rgb_colors)
     plt.savefig("plot.png")
